@@ -1,0 +1,54 @@
+name: bot
+
+# Runs the bot for ~55 minutes, then starts the next run itself.
+# cron-job.org (every 15 min) + the schedule below are watchdogs in case the chain breaks.
+# To stop the bot: Settings > Secrets and variables > Actions > Variables > BOT_ENABLED = false
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+concurrency:
+  group: bot
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  run:
+    if: vars.BOT_ENABLED != 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout private state repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.STATE_REPO }}
+          ssh-key: ${{ secrets.STATE_SSH_KEY }}
+          path: state
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -q openpyxl
+
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          ADMIN_GROUP_ID: ${{ secrets.ADMIN_GROUP_ID }}
+          STATE_DIR: state
+        run: |
+          git -C state config user.name "price-report-bot"
+          git -C state config user.email "bot@users.noreply.github.com"
+          python -m bot.main
+
+      - name: Start next run
+        if: ${{ !cancelled() && vars.BOT_ENABLED != 'false' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run bot.yml --repo ${{ github.repository }} --ref ${{ github.ref_name }}

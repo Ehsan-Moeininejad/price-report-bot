@@ -1,0 +1,29 @@
+name: selftest
+
+# Manual check: can GitHub reach Telegram, Digikala and Torob, and do the parsers still work?
+on:
+  workflow_dispatch:
+    inputs:
+      product_link:
+        description: "A Digikala product link (with discount)"
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Selftest
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          ADMIN_GROUP_ID: ${{ secrets.ADMIN_GROUP_ID }}
+          PRODUCT_LINK: ${{ inputs.product_link }}
+        run: python -m bot.selftest "$PRODUCT_LINK"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: samples
+          path: samples/

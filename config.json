@@ -1,0 +1,42 @@
+{
+  "_note": "تنظیمات بات. بعد از هر تغییر، فایل را در گیت‌هاب Commit کنید؛ اجرای بعدی بات آن را می‌خواند.",
+
+  "run_minutes": 55,
+  "draft_expire_minutes": 30,
+
+  "limits": {
+    "reports_per_user_per_day": 5,
+    "same_product_cooldown_days": 7,
+    "confirmed_product_cooldown_days": 3
+  },
+
+  "check": {
+    "cheaper_min_gap_percent": 1.0,
+    "fake_rrp_over_market_percent": 5.0,
+    "torob_search_results_to_inspect": 4,
+    "min_name_similarity": 0.45,
+    "auto_reject_likely_invalid": false
+  },
+
+  "trusted_sellers": {
+    "_note": "فروشنده‌ای معتبر است اگر در لیست سفید باشد، یا امتیازش در ترب از حداقل بیشتر باشد، یا سابقه‌اش در ترب از حداقل سال بیشتر باشد.",
+    "whitelist": [
+      "اسنپ شاپ", "اسنپ‌شاپ", "اسنپ پی", "اسنپ‌پی", "snappshop",
+      "باسلام", "تکنولایف", "تکنو لایف", "آمازون ایران", "میلی", "دیجی استایل",
+      "ایسام", "هایپر استار", "افق کوروش", "اوکالا", "بامیلو", "تیمچه", "ترب"
+    ],
+    "blacklist": ["دیجی‌کالا", "دیجی کالا", "digikala"],
+    "min_shop_score": 4.0,
+    "min_years_on_torob": 1
+  },
+
+  "reject_reasons": [
+    "قیمت دیجی‌کالا درست است",
+    "فروشنده مقایسه‌شده معتبر نیست",
+    "کالا یا مدل متفاوت است",
+    "کالای فروشگاه دیگر ناموجود است",
+    "گزارش تکراری است"
+  ],
+
+  "low_stock_alert": 10
+}
